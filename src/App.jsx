@@ -7,6 +7,7 @@ import Contact from "./pages/Contact";
 import AdminLayout from "./components/AdminLayout";
 import AdminVehicles from "./pages/AdminVehicles";
 import AdminFinance from "./pages/AdminFinance";
+import Partners from "./pages/Partners";
 import SoldVehicles from "./pages/SoldVehicles";
 import Login from "./pages/Login.jsx";
 import NotFound from "./pages/NotFound";
@@ -45,6 +46,7 @@ function AppContent() {
               <Route index element={<Navigate to="vehicles" replace />} />
               <Route path="vehicles" element={<AdminVehicles />} />
               <Route path="finance" element={<AdminFinance />} />
+              <Route path="partners" element={<Partners />} />
               <Route path="sold" element={<SoldVehicles />} />
             </Route>
           )}

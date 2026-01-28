@@ -29,6 +29,7 @@ export default function AdminVehicles() {
   const [vehicles, setVehicles] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Image management
   const [images, setImages] = useState([]);
@@ -245,6 +246,18 @@ export default function AdminVehicles() {
     () => maintenance.reduce((sum, m) => sum + (m.cost || 0), 0),
     [maintenance]
   );
+
+  const filteredVehicles = useMemo(() => {
+    if (!searchTerm) return vehicles;
+    const term = searchTerm.toLowerCase();
+    return vehicles.filter(v =>
+      v.title.toLowerCase().includes(term) ||
+      v.details?.brand?.toLowerCase().includes(term) ||
+      v.details?.model?.toLowerCase().includes(term) ||
+      v.details?.registrationNo?.toLowerCase().includes(term) ||
+      v.details?.chassisNo?.toLowerCase().includes(term)
+    );
+  }, [vehicles, searchTerm]);
 
 function beginSell(v) {
   setSellId(v.id);
@@ -702,6 +715,17 @@ function generateInvoiceAndSell() {
 
 
       <div className="table-responsive">
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by vehicle name, brand, model, registration or chassis number..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <small className="text-muted">Showing {filteredVehicles.length} of {vehicles.length} vehicles</small>
+        </div>
+
         <table className="table table-bordered align-middle">
           <thead className="table-light">
             <tr>
@@ -713,7 +737,7 @@ function generateInvoiceAndSell() {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map(v => (
+            {filteredVehicles.map(v => (
               <tr key={v.id}>
                 <td>
                   <div className="d-flex gap-2 align-items-center">
@@ -740,8 +764,10 @@ function generateInvoiceAndSell() {
                 </td>
               </tr>
             ))}
-            {!vehicles.length && (
-              <tr><td colSpan="5" className="text-muted">No data</td></tr>
+            {!filteredVehicles.length && (
+              <tr><td colSpan="5" className="text-muted text-center">
+                {vehicles.length === 0 ? "No vehicles added yet" : "No vehicles match your search"}
+              </td></tr>
             )}
           </tbody>
         </table>

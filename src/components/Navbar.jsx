@@ -29,6 +29,7 @@ export default function SiteNavbar() {
               <>
                 <NavLink className="nav-link" to="/admin/vehicles">Admin</NavLink>
                 <NavLink className="nav-link" to="/admin/finance">Finance</NavLink>
+                <NavLink className="nav-link" to="/admin/partners">Partners</NavLink>
                 <NavLink className="nav-link" to="/admin/sold">Sold Vehicles</NavLink>
                 <button 
                   className="nav-link btn btn-link text-decoration-none"

@@ -11,6 +11,9 @@ export default function AdminLayout() {
           <NavLink to="/admin/finance" className="list-group-item list-group-item-action">
             Finance Reports
           </NavLink>
+          <NavLink to="/admin/partners" className="list-group-item list-group-item-action">
+            Partner Transactions
+          </NavLink>
         </div>
       </div>
 

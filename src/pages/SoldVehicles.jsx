@@ -6,6 +6,7 @@ export default function SoldVehicles() {
   const [filterYear, setFilterYear] = useState(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
   const [filterType, setFilterType] = useState("monthly"); // monthly | yearly
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     setVehicles(loadVehicles());
@@ -16,21 +17,36 @@ export default function SoldVehicles() {
     return vehicles.filter(v => v.status === "sold");
   }, [vehicles]);
 
-  // Filter by year/month
+  // Filter by year/month and search term
   const filteredVehicles = useMemo(() => {
+    const term = searchTerm.toLowerCase();
     return soldVehicles.filter(v => {
       if (!v.finance?.soldDate) return false;
       const date = new Date(v.finance.soldDate);
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
 
+      let dateMatches = false;
       if (filterType === "yearly") {
-        return year === filterYear;
+        dateMatches = year === filterYear;
       } else {
-        return year === filterYear && month === filterMonth;
+        dateMatches = year === filterYear && month === filterMonth;
       }
+
+      // Search matches
+      let searchMatches = true;
+      if (searchTerm) {
+        searchMatches = 
+          v.title?.toLowerCase().includes(term) ||
+          v.details?.brand?.toLowerCase().includes(term) ||
+          v.details?.model?.toLowerCase().includes(term) ||
+          v.finance?.invoice?.customerName?.toLowerCase().includes(term) ||
+          v.finance?.invoice?.customerId?.toLowerCase().includes(term);
+      }
+
+      return dateMatches && searchMatches;
     });
-  }, [soldVehicles, filterYear, filterMonth, filterType]);
+  }, [soldVehicles, filterYear, filterMonth, filterType, searchTerm]);
 
   // Calculate totals
   const totals = useMemo(() => {
@@ -154,6 +170,17 @@ export default function SoldVehicles() {
       )}
 
       {/* Vehicles Table */}
+      <div className="mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by vehicle name, brand, model, or customer name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <small className="text-muted">Showing {filteredVehicles.length} of {soldVehicles.length} sold vehicles</small>
+      </div>
+
       {filteredVehicles.length > 0 ? (
         <div className="table-responsive">
           <table className="table table-hover">
